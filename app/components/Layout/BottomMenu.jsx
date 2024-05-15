@@ -1,12 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Feather, AntDesign, FontAwesome5, Ionicons } from "@expo/vector-icons";
-import { useNavigation } from '@react-navigation/native';
-
+import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
 
 const BottomMenu = () => {
-  const [selectedIcon, setSelectedIcon] = useState("home"); // Accueil est sélectionné par défaut
+  const [selectedIcon, setSelectedIcon] = useState("home");
   const navigation = useNavigation();
+  const route = useRoute();
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      switch (route.name) {
+        case 'Home':
+          setSelectedIcon('home');
+          break;
+        case 'Panier':
+          setSelectedIcon('shopping-cart');
+          break;
+        case 'Compte':
+          setSelectedIcon('user-alt');
+          break;
+        case 'Parametre':
+          setSelectedIcon('settings-sharp');
+          break;
+        default:
+          setSelectedIcon('home');
+          break;
+      }
+    }
+  }, [isFocused, route.name]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', () => {
+      // Lorsqu'un utilisateur fait un retour en arrière, vérifions si l'écran précédent est celui qui devrait avoir l'icône active
+      switch (route.name) {
+        case 'Home':
+          setSelectedIcon('home');
+          break;
+        case 'Panier':
+          setSelectedIcon('shopping-cart');
+          break;
+        case 'Compte':
+          setSelectedIcon('user-alt');
+          break;
+        case 'Parametre':
+          setSelectedIcon('settings-sharp');
+          break;
+        default:
+          setSelectedIcon('home');
+          break;
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, route.name]);
 
   return (
     <View style={styles.bottomMenu}>
@@ -14,7 +62,7 @@ const BottomMenu = () => {
         style={styles.menuItem}
         onPress={() => {
           setSelectedIcon("home");
-          navigation.navigate('Home'); // Naviguez vers l'écran HomeScreen
+          navigation.navigate('Home');
         }}
       >
         <AntDesign
@@ -33,7 +81,10 @@ const BottomMenu = () => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.menuItem}
-        onPress={() => setSelectedIcon("shopping-cart")}
+        onPress={() => {
+          setSelectedIcon("shopping-cart");
+          navigation.navigate('Panier');
+        }}
       >
         <Feather
           name="shopping-cart"
@@ -55,7 +106,7 @@ const BottomMenu = () => {
         style={styles.menuItem}
         onPress={() => {
           setSelectedIcon("user-alt");
-          navigation.navigate('Compte'); // Naviguez vers l'écran CompteScreen
+          navigation.navigate('Compte');
         }}
       >
         <FontAwesome5

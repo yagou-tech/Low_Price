@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "LowPrice",
-    "slug": "LowPrice",
+    "slug": "low-price",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./app/assets/icon.png",
@@ -25,6 +25,18 @@
     },
     "web": {
       "favicon": "./app/assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "dbe00837-bc6b-497e-aac6-382314cb1334"
+      }
+    },
+    "owner": "yagouba",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/dbe00837-bc6b-497e-aac6-382314cb1334"
     }
   }
 }

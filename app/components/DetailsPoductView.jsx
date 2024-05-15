@@ -1,6 +1,7 @@
-import React, { useRef, useState } from 'react';
-import { View, ScrollView, StyleSheet, Dimensions, Text, TouchableOpacity,  Animated } from 'react-native';
+import React, { useRef } from 'react';
+import { View, ScrollView, StyleSheet, Dimensions, Text, TouchableOpacity, Animated } from 'react-native';
 import IncrementDecrementInput from './utils/IncrementDecrementInput';
+import { FontAwesome } from '@expo/vector-icons';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -8,73 +9,69 @@ const Header_Max_Height = windowHeight / 2;
 const Header_Min_Height = windowHeight / 3;
 
 const DetailsProduct = ({animHeaderValue}) => {
-  const [isSticky, setIsSticky] = useState(false);
-  const animatedValue = useRef(new Animated.Value(0)).current;
+  const scrollY = useRef(new Animated.Value(0)).current;
+  let scrollOffsetY = useRef(new Animated.Value(0)).current;
 
-
-
-  const animateHeaderHeight =  animHeaderValue.interpolate({
+  const animateHeaderHeight = animHeaderValue.interpolate({
     inputRange: [0, Header_Max_Height - Header_Min_Height],
-    outputRange: [Header_Max_Height , Header_Min_Height],
+    outputRange: [Header_Min_Height, Header_Max_Height],
     extrapolate: 'clamp'
-  })
+  });
 
   return (
-    <Animated.View 
+    <View style={styles.container}>
+      <Animated.View
         style={[
-          styles.container,
+          styles.header,
           {
             height: animateHeaderHeight,
           },
         ]}
       >
-      <ScrollView 
-        scrollEnabled={!isSticky}
-        contentContainerStyle={styles.scrollViewContent}
-      >
+        <ScrollView
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollOffsetY}}}],
+          {useNativeDriver: false}
+        )}
+        >
         {/* Contenu de vos détails de produit ici */}
+        <Text>Livraison gratuite</Text>
+        <Text>4.8</Text>
+        <Text>Pampers</Text>
         <View>
           <View>
-            <Text>Livraison gratuite</Text>
-            <Text>4.8</Text>
-          </View>
-          <Text>Pampers</Text>
-          <View>
-            <View>
-              <Text>Référence</Text>
-              <Text>11000002</Text>
-            </View>
-            <View>
-              <Text>État</Text>
-              <Text>Nouveau produit</Text>
-            </View>
+            <Text>Référence</Text>
+            <Text>11000002</Text>
           </View>
           <View>
-            <Text>Livraison gratuite</Text>
-            <Text>4.8</Text>
-          </View>
-          <Text>Pampers</Text>
-          <View>
-            <Text style={styles.priceItem}>990 FCFA</Text>
-            <View style={styles.quantityContainer}>
-              <IncrementDecrementInput />
-              <TouchableOpacity style={styles.applyButton}>
-                <Text style={styles.applyButtonText}>Acheter</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View>
-            <Text>Caractéristiques</Text>
-            <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque aliqu am at pulvinar placerat ullamcorper tempus semper purus amet. Aliquam, consectetur dui quis viverra tincidunt lectus ut urna. Eros semper proin nunc nulla. Rhon</Text>
+            <Text>État</Text>
+            <Text>Nouveau produit</Text>
           </View>
         </View>
-      </ScrollView>
-    </Animated.View >
+        <Text>Livraison gratuite</Text>
+        <Text>4.8</Text>
+        <Text>Pampers</Text>
+        <Text style={styles.priceItem}>990 FCFA</Text>
+        <View style={styles.quantityContainer}>
+          <IncrementDecrementInput />
+          <TouchableOpacity style={styles.applyButton}>
+            <Text style={styles.applyButtonText}>Acheter</Text>
+          </TouchableOpacity>
+        </View>
+        <Text>Caractéristiques</Text>
+        <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque aliqu am at pulvinar placerat ullamcorper tempus semper purus amet. Aliquam, consectetur dui quis viverra tincidunt lectus ut urna. Eros semper proin nunc nulla. Rhon</Text>
+        </ScrollView>
+      </Animated.View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  header: {
     position: 'absolute',
     bottom: 0,
     left: 0,
@@ -84,10 +81,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 50,
     backgroundColor: '#FFF',
     elevation: 4, // Ombre pour une apparence flottante
-  },
-  scrollViewContent: {
-    flexGrow: 1,
-    paddingBottom: 20, // Marge inférieure pour éviter que le contenu ne soit coupé lors du défilement
   },
   priceItem: {
     fontSize: 23.09,

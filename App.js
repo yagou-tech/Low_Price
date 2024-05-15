@@ -10,6 +10,11 @@ import MainScreen from "./app/components/Layout/MainScreen";
 import ProductDetailsScreen from "./app/components/ProductDetailsScreen";
 import { AntDesign, MaterialIcons, Feather } from "@expo/vector-icons";
 import ProductsScreen from "./app/components/ProductsScreen";
+import Confidentiality from "./app/components/Parametre/ConfidentialityScreen";
+import MentionsLegales from "./app/components/Parametre/MentionsScreen";
+import ParametreScreen from "./app/components/Parametre/ParametreScreen";
+import CompteScreen from "./app/components/Compte/CompteScreen";
+import AdresseLivraison from "./app/components/Commande/AdresseLivraison";
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -101,6 +106,78 @@ export default function App() {
             ),
           }}
         />
+        <Stack.Screen
+          name="Profil"
+          component={CompteScreen}
+          options={() => ({
+            title: "Paramètre Profil",
+            headerLeft: (props) => {
+              return (
+                <AntDesign
+                  name="left"
+                  size={24}
+                  color="#28348A"
+                  style={{ margin: 10 }}
+                  onPress={props.onPress}
+                />
+              );
+            },
+            headerTitleStyle: {
+              fontSize: 16,
+              fontWeight: "bold",
+              color: "#333",
+              paddingRight: 50,
+            },
+          })}
+        />
+        <Stack.Screen
+          name="Confidentiality"
+          component={Confidentiality}
+          options={() => ({
+            title: "Règles et confidentialités",
+            headerLeft: (props) => {
+              return (
+                <AntDesign
+                  name="left"
+                  size={24}
+                  color="#28348A"
+                  style={{ margin: 10 }}
+                  onPress={props.onPress}
+                />
+              );
+            },
+            headerTitleStyle: {
+              fontSize: 16,
+              fontWeight: "bold",
+              color: "#333",
+              paddingRight: 50,
+            },
+          })}
+        />
+        <Stack.Screen
+          name="MentionsLegales"
+          component={MentionsLegales}
+          options={() => ({
+            title: "Mentions légales",
+            headerLeft: (props) => {
+              return (
+                <AntDesign
+                  name="left"
+                  size={24}
+                  color="#28348A"
+                  style={{ margin: 10 }}
+                  onPress={props.onPress}
+                />
+              );
+            },
+            headerTitleStyle: {
+              fontSize: 16,
+              fontWeight: "bold",
+              color: "#333",
+              paddingRight: 50,
+            },
+          })}
+        />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
@@ -137,12 +214,12 @@ const styles = StyleSheet.create({
     marginEnd: 10,
     backgroundColor: "#fff",
     height: 46,
-    width:46,
+    width: 46,
     borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "black",
-    shadowOffset: {width: 0, height: 5},
+    shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
     elevation: 10,
