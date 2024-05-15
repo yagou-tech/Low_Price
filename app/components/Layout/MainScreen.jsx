@@ -121,7 +121,7 @@ const MainScreen = () => {
           name="ResumeScreen"
           component={ResumeScreen}
           options={{
-            title: "Annuler",
+            title: "Résumé",
             headerLeft: () => (
               <View style={styles.headerContainer}>
                 <AntDesign
@@ -129,7 +129,7 @@ const MainScreen = () => {
                   size={24}
                   color="#28348A"
                   style={{ marginStart: 15 }}
-                  onPress={handleBackAddress}
+                  onPress={handleBackPaiement}
                 />
               </View>
             ),

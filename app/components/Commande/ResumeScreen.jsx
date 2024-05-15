@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView, Modal} from "react-native";
 import CustomButton from "../utils/CustomButton";
 import { AntDesign } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const ResumeScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
+  const navigation = useNavigation();
 
   const handleSubmit = () => {
     setModalVisible(true);
@@ -12,6 +14,7 @@ const ResumeScreen = () => {
 
   const closeModal = () => {
     setModalVisible(false);
+    navigation.navigate("Home");
   };
 
   return (

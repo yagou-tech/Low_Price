@@ -16,20 +16,20 @@ import { useNavigation } from "@react-navigation/native";
 const AdresseLivraison = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [categories, setCategories] = useState([]);
-    const [users, setUsers] = useState([]);
+    // const [users, setUsers] = useState([]);
 
-    useEffect(() => {
-        getUsers();
-    }, []);
+    // useEffect(() => {
+    //     getUsers();
+    // }, []);
 
-    const getUsers = () => {
-        fetch('https://jsonplaceholder.typicode.com/users')
-        .then(function(response) {
-            return response.json();
-        }).then(function(response) {
-            setUsers(response);
-        });
-    }
+    // const getUsers = () => {
+    //     fetch('https://jsonplaceholder.typicode.com/users')
+    //     .then(function(response) {
+    //         return response.json();
+    //     }).then(function(response) {
+    //         setUsers(response);
+    //     });
+    // }
 
 
   const navigation = useNavigation();
@@ -40,18 +40,18 @@ const AdresseLivraison = () => {
   };
 
   // Initialisation des catégories
-//   useEffect(() => {
-//     // Vous pouvez récupérer les catégories depuis une source externe
-//     const categoriesData = ["Retrait en magasin", "Livraison a domicile"];
+  useEffect(() => {
+    // Vous pouvez récupérer les catégories depuis une source externe
+    const categoriesData = ["Retrait en magasin", "Livraison a domicile"];
 
-//     // Sélectionner le premier élément par défaut
-//     if (categoriesData.length > 0) {
-//       setSelectedCategories([categoriesData[0]]);
-//     }
+    // Sélectionner le premier élément par défaut
+    if (categoriesData.length > 0) {
+      setSelectedCategories([categoriesData[0]]);
+    }
 
-//     // Mettre à jour l'état des catégories
-//     setCategories(categoriesData);
-//   }, []);
+    // Mettre à jour l'état des catégories
+    setCategories(categoriesData);
+  }, []);
 
   const toggleCategory = (category) => {
     if (selectedCategories.includes(category)) {
@@ -90,7 +90,7 @@ const AdresseLivraison = () => {
             </View>
             <Text style={styles.adresseTitle}>Mode de livraison</Text>
           </View>
-          {/* <View style={styles.categoriesContainer}>
+          <View style={styles.categoriesContainer}>
             {categories.map((category) => (
               <TouchableWithoutFeedback
                 key={category}
@@ -112,8 +112,8 @@ const AdresseLivraison = () => {
                 </View>
               </TouchableWithoutFeedback>
             ))}
-          </View> */}
-          <View style={styles.categoriesContainer}>
+          </View>
+          {/* <View style={styles.categoriesContainer}>
             {users.map((user) => (
                 <TouchableWithoutFeedback key={user.id}>
                 <View style={styles.categoryItemContainer}>
@@ -121,7 +121,7 @@ const AdresseLivraison = () => {
                 </View>
                 </TouchableWithoutFeedback>
             ))}
-          </View>
+          </View> */}
           <View style={styles.storeContainer}>
             <View style={styles.storeItem}>
               <Image source={require("../../assets/EDK.png")} />
