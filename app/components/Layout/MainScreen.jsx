@@ -64,7 +64,10 @@ const MainScreen = () => {
                   size={20}
                   color="black"
                   style={{ margin: 10 }}
-                  onPress={props.onPress}
+                  onPress={() => {
+                    // Mettez ici votre logique de connexion
+                    navigation.navigate("Home");
+                  }}
                 />
                 <Text style={styles.paraTitle}>Paramètre</Text>
               </View>

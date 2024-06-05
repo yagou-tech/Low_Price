@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 const FavorisSection = () => {
+  // État pour gérer l'icône actuelle
+  const [isIconActive, setIsIconActive] = useState(false);
+
+  // Fonction pour changer l'état de l'icône
+  const toggleFavorite = () => {
+    setIsIconActive(!isIconActive);
+  };
   return (
     <View style={styles.container}>
       <View style={styles.produitContainer}>
@@ -23,10 +30,11 @@ const FavorisSection = () => {
           <View style={styles.footer}>
             <Text style={styles.price}>6 000 FCFA</Text>
             <MaterialIcons
-              name="favorite"
+              name={isIconActive ? "favorite-outline" : "favorite"}
               size={24}
-              color="#3350A4"
-              style={{ paddingEnd: 20, right: -5, }}
+              color={isIconActive ? "#3350A4" : "rgba(226, 6, 19, 1)"}
+              style={{ paddingEnd: 20, right: -5 }}
+              onPress={toggleFavorite}
             />
           </View>
         </View>

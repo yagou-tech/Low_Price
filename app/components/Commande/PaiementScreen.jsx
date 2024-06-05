@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableWithoutFeedback, ScrollView, Image } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import CustomButton from "../utils/CustomButton";
+import CustomButton from "../../utils/CustomButton";
 import { useNavigation } from "@react-navigation/native";
 
 const PaiementScreen = () => {
@@ -41,7 +41,7 @@ const PaiementScreen = () => {
               <View style={styles.numerocontainer}>
                 <Text style={styles.numero}>3</Text>
               </View>
-              <Text style={styles.adresseTitle}>Mode de livraison</Text>
+              <Text style={styles.adresseTitle}>Mode de payement</Text>
             </View>
             <View style={styles.categoriesContainer}>
               <TouchableWithoutFeedback
@@ -180,7 +180,7 @@ const PaiementScreen = () => {
             <View style={styles.checkboxContainer}>
               <TouchableWithoutFeedback onPress={toggleCheckbox}>
                 <View style={styles.checkbox}>
-                  {isChecked && <AntDesign name="check" size={16} color="#28348A" />}
+                  {isChecked && <AntDesign name="check" size={16} color="#fff" backgroundColor= "rgba(40, 52, 138, 1)" />}
                 </View>
               </TouchableWithoutFeedback>
               <Text style={styles.checkboxText}>J'ai lu les conditions générales de vente et j'y adhère sans réserve.</Text>
@@ -281,18 +281,19 @@ const styles = StyleSheet.create({
   },
   checkboxContainer: {
     flexDirection: "row",
-    alignItems: "center",
     marginTop: 20,
     marginBottom: 50,
   },
   checkbox: {
     width: 20,
     height: 20,
-    borderWidth: 1,
-    borderColor: "#ccc",
+    borderRadius: 3,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 10,
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "rgba(40, 52, 138, 1)",
   },
   checkboxText: {
     fontSize: 14,

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import IncrementDecrementInput from "../utils/IncrementDecrementInput";
+import IncrementDecrementInput from "../../utils/IncrementDecrementInput";
 
 
 const CommandeSection = () => {

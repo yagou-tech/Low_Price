@@ -3,28 +3,43 @@ import {
   View,
   StyleSheet,
   Text,
-  Image,
   Animated,
   TouchableOpacity,
   ScrollView,
 } from "react-native";
 import { Slides } from "./Slides";
-import IncrementDecrementInput from "./utils/IncrementDecrementInput";
+import IncrementDecrementInput from "../utils/IncrementDecrementInput";
 import { FontAwesome } from "@expo/vector-icons";
-import ReviewBars from "./utils/ReviewBars";
-import CustomButton from "./utils/CustomButton";
+import ReviewBars from "../utils/ReviewBars";
+import CustomButton from "../utils/CustomButton";
 import Comments from "./CommentSection";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
-const ProductDetailsScreen = ({ route }) => {
+const ProductDetailsScreen = () => {
   let scrollOffsetY = useRef(new Animated.Value(0)).current;
+  const navigation = useNavigation();
 
+  const handleBuy = () => {
+    // Mettez ici votre logique de connexion
+    navigation.navigate('Panier');
+  };
+
+  const route = useRoute();
   const { product } = route.params;
+
+  if (!product) {
+    return (
+      <View style={styles.container}>
+        <Text>Produit non disponible</Text>
+      </View>
+    );
+  }
 
   const handlePress = () => {};
 
   return (
     <ScrollView style={styles.container}>
-      <Slides images={[product.image, product.image, product.image]} />
+      <Slides images={product.images} />
       {/* Autres éléments de votre écran */}
       {/* Contenu de vos détails de produit ici */}
       <View style={styles.detailsContainer}>
@@ -33,12 +48,12 @@ const ProductDetailsScreen = ({ route }) => {
           <Text style={styles.headerTitle}>Livraison gratuite</Text>
           <View style={styles.star}>
             <FontAwesome name="star" size={24} color="#E6BB66" />
-            <Text style={styles.noteVote}>4.8</Text>
+            <Text style={styles.noteVote}>{product.reviews_avg_rating}</Text>
             <Text style={styles.nbrVote}>(231)</Text>
           </View>
         </View>
         <View>
-          <Text style={styles.ProductName}>Pampers</Text>
+          <Text style={styles.ProductName}>{product.name}</Text>
           <View style={styles.refContainer}>
             <Text>Référence</Text>
             <Text style={styles.refItem}>11000002</Text>
@@ -49,10 +64,10 @@ const ProductDetailsScreen = ({ route }) => {
           </View>
         </View>
         <View style={styles.priceContainer}>
-          <Text style={styles.priceItem}>990 FCFA</Text>
+          <Text style={styles.priceItem}>{product.prix} FCFA</Text>
           <View style={styles.quantityContainer}>
             <IncrementDecrementInput />
-            <TouchableOpacity style={styles.applyButton}>
+            <TouchableOpacity style={styles.applyButton} onPress={handleBuy}>
               <Text style={styles.applyButtonText}>Acheter</Text>
             </TouchableOpacity>
           </View>
@@ -60,10 +75,7 @@ const ProductDetailsScreen = ({ route }) => {
         <View style={styles.caractContainer}>
           <Text style={styles.caractTitle}>Caractéristiques</Text>
           <Text styles={styles.caractContent}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque
-            aliqu am at pulvinar placerat ullamcorper tempus semper purus amet.
-            Aliquam, consectetur dui quis viverra tincidunt lectus ut urna. Eros
-            semper proin nunc nulla. Rhon
+            {product.description}
           </Text>
         </View>
         <View>

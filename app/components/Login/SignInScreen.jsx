@@ -1,28 +1,47 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+// SignInScreen.js
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Text, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Input, Button } from "@rneui/themed";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useDispatch, useSelector } from 'react-redux';
+import { login, selectLoading, selectError, selectUser } from '../../redux/AuthentificationSlice';
 
 const SignInScreen = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigation = useNavigation();
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // État pour gérer la visibilité du mot de passe
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const dispatch = useDispatch();
+  const loading = useSelector(selectLoading);
+  const error = useSelector(selectError);
+  const user = useSelector(selectUser);
 
-  const handleLogin = () => {
-    // Mettez ici votre logique de connexion
-    navigation.navigate("MainScreen");
+  useEffect(() => {
+    if (user) {
+      navigation.navigate("MainScreen");
+    }
+  }, [user, navigation]);
+
+  const handleLogin = async () => {
+    try {
+      await dispatch(login(email, password));
+      setEmail('');
+      setPassword('');
+    } catch (err) {
+      Alert.alert('Erreur', err.message);
+    }
   };
+
   const handleSignUp = () => {
-    // Mettez ici votre logique de connexion
     navigation.navigate("SignUpScreen");
   };
+
   const handleForget = () => {
-    // Mettez ici votre logique de connexion
     navigation.navigate("ForgetPassScreen");
   };
 
   const togglePasswordVisibility = () => {
-    // Fonction pour changer la visibilité du mot de passe
     setIsPasswordVisible(!isPasswordVisible);
   };
 
@@ -41,30 +60,40 @@ const SignInScreen = () => {
           <Input
             placeholder="Brandonelouis@gmail.com"
             inputContainerStyle={styles.inputContainerStyle}
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
           />
         </View>
         <View>
           <Text style={styles.loginTitle}>Mot de passe</Text>
           <Input
             placeholder="Password"
-            secureTextEntry={!isPasswordVisible} // Utilisez l'état pour déterminer la visibilité du mot de passe
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!isPasswordVisible}
             inputContainerStyle={styles.inputContainerStyle}
             rightIcon={
               <MaterialIcons
-                name={isPasswordVisible ? "visibility" : "visibility-off"} // Changez l'icône en fonction de l'état
+                name={isPasswordVisible ? "visibility" : "visibility-off"}
                 style={styles.icon}
                 size={24}
                 color="black"
-                onPress={togglePasswordVisibility} // Appeler la fonction pour changer la visibilité du mot de passe
+                onPress={togglePasswordVisibility}
               />
             }
           />
         </View>
+        {error && <Text style={styles.error}>{error}</Text>}
+      </View>
+      <View style={styles.forgetPasswordContainer}>
         <Text style={styles.forgetPassword} onPress={handleForget}>
           Mot de passe oublié ?
         </Text>
       </View>
       <View style={styles.bottomContainer}>
+        
         <View>
           <Button
             title="SE CONNECTER"
@@ -72,12 +101,13 @@ const SignInScreen = () => {
             containerStyle={styles.buttonContainerStyle}
             titleStyle={styles.buttonTitleStyle}
             onPress={handleLogin}
+            loading={loading}
           />
         </View>
         <View style={styles.signupContainer}>
           <Text>Vous n’avez pas de compte ?</Text>
           <Text style={styles.signup} onPress={handleSignUp}>
-            S ‘inscrire
+            S'inscrire
           </Text>
         </View>
       </View>
@@ -106,7 +136,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "400",
   },
-
   loginTitle: {
     fontSize: 12,
     fontWeight: "500",
@@ -123,7 +152,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingStart: 20,
     backgroundColor: "#fff",
-    borderBottomWidth: 0,
   },
   icon: {
     position: "absolute",
@@ -132,6 +160,10 @@ const styles = StyleSheet.create({
     zIndex: 1,
     justifyContent: "center",
     alignItems: "center",
+    width: 70,
+  },
+  forgetPasswordContainer: {
+    marginBottom: 30,
   },
   forgetPassword: {
     textAlign: "right",
@@ -162,6 +194,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 14,
     margin: 5,
+  },
+  error: {
+    color: 'red',
   },
 });
 

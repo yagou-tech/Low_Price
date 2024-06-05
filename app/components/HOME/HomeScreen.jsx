@@ -5,6 +5,7 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  Text,
 } from "react-native";
 import PromoSection from "./PromoSection";
 import ProductsSection from "./ProductsSection";
@@ -75,6 +76,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignItems: "center",
     paddingStart: 20,
+    width: "100%",
   },
   searchBar: {
     flexDirection: "row",
@@ -82,10 +84,10 @@ const styles = StyleSheet.create({
     borderRadius: 64,
     paddingHorizontal: 10,
     marginBottom: 5,
-    width: 290,
+    width: "80%",
     height: 50,
     backgroundColor: "#fff",
-    shadowOpacity: 4,
+    shadowOpacity:  0.3,
   },
   searchInput: {
     flex: 1,
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
     shadowColor: "#00000008",
     shadowOffset: { width: -2, height: 4 },
     shadowOpacity: 0.3,
-    shadowRadius: 4,
+    shadowRadius: 2,
   },
   filterContainer: {
     marginStart: 10,

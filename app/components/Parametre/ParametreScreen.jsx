@@ -1,16 +1,19 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { AntDesign, Ionicons } from '@expo/vector-icons'; 
-import { useNavigation } from '@react-navigation/native';
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch } from 'react-redux';
+import { performLogout } from '../../redux/AuthentificationSlice';
 
 
 const ParametreScreen = () => {
-
+  const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const handleLogout = () => {
-    // Mettez ici votre logique de connexion
-    navigation.navigate("SignInScreen");
+    dispatch(performLogout());
+    navigation.navigate('SignInScreen');
   };
 
   const handleConfidentiality = () => {
@@ -27,7 +30,6 @@ const ParametreScreen = () => {
     // Mettez ici votre logique de connexion
     navigation.navigate("MentionsLegales");
   };
-
 
   return (
     <View style={styles.container}>
@@ -58,9 +60,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   paraItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     width: 350,
     height: 60,
     backgroundColor: "#fff",

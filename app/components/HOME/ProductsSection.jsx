@@ -1,27 +1,119 @@
-import React, { useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { categories, productsData } from "../data";
+import axios from "axios";
 
 const ProductsSection = () => {
-  const [selectedCategory, setSelectedCategory] = useState("Tout");
+  const [selectedCategory, setSelectedCategory] = useState(0); // Utiliser 0 pour "Tout"
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    getCategories();
+    getProducts();
+  }, []);
+
+  useEffect(() => {}, [selectedCategory, products]);
+
+  const getCategories = async () => {
+    try {
+      const response = await axios.get(
+        "https://lowpriceclone.euleukcommunication.sn/api/category"
+      );
+      setCategories([{ id: 0, name: "Tout" }, ...response.data.data]);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des catégories :", error);
+    }
+  };
+
+  const getProducts = async () => {
+    try {
+      const response = await axios.get(
+        "https://lowpriceclone.euleukcommunication.sn/api/product"
+      );
+      setProducts(response.data); // Assurez-vous que la réponse contient bien les produits
+      setLoading(false);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des produits :", error);
+      setLoading(false);
+    }
+  };
+
+  const filteredProducts =
+    selectedCategory === 0
+      ? products
+      : products.filter(
+          (product) => Number(product.categorie_id) === selectedCategory
+        );
+
+  const navigateToProductDetails = (product) => {
+    navigation.navigate("ProductDetails", { product });
+  };
 
   const renderCategoryItem = ({ item }) => (
     <TouchableOpacity
-      style={[styles.categoryItem, item === selectedCategory && styles.selectedCategory]}
-      onPress={() => setSelectedCategory(item)}
+      style={[
+        styles.categoryItem,
+        item.id === selectedCategory && styles.selectedCategory,
+      ]}
+      onPress={() => setSelectedCategory(item.id)}
     >
-      <Text style={[styles.categoryText, item === selectedCategory && styles.selectedText]}>{item}</Text>
+      <Text
+        style={[
+          styles.categoryText,
+          item.id === selectedCategory && styles.selectedText,
+        ]}
+      >
+        {item.name}
+      </Text>
     </TouchableOpacity>
   );
 
-  const filteredProducts = selectedCategory === "Tout" ? productsData : productsData.filter(product => product.category === selectedCategory);
+  const renderProductItem = ({ item }) => {
+    const imageUrl =
+      item.images && item.images.length > 0
+        ? `https://lowpriceclone.euleukcommunication.sn/storage/${item.images[0].image}`
+        : null;
 
-  const navigateToProductDetails = (product) => {
-    navigation.navigate('ProductDetails', { product }); // Passer le produit complet
+    return (
+      <TouchableOpacity
+        style={styles.productContainer}
+        onPress={() => navigateToProductDetails(item)}
+      >
+        <Text style={styles.newText}>Nouveau</Text>
+        <View style={styles.cardContent}>
+          {/* Image du produit */}
+          {imageUrl ? (
+            <Image source={{ uri: imageUrl }} style={styles.productImage} />
+          ) : (
+            <Text>Image non disponible</Text>
+          )}
+          {/* Nom du produit */}
+          <Text style={styles.productName}>{item.name}</Text>
+          {/* Prix du produit */}
+          <Text style={styles.productPrice}>{item.prix} FCFA</Text>
+        </View>
+      </TouchableOpacity>
+    );
   };
-  
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#28348A" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -30,7 +122,7 @@ const ProductsSection = () => {
         horizontal
         data={categories}
         renderItem={renderCategoryItem}
-        keyExtractor={(item) => item}
+        keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.categoryContainer}
         showsHorizontalScrollIndicator={false}
       />
@@ -39,19 +131,7 @@ const ProductsSection = () => {
       <FlatList
         horizontal
         data={filteredProducts}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.productContainer} onPress={() => navigateToProductDetails(item)}>
-            <Text style={styles.newText}>Nouveau</Text>
-            <View style={styles.cardContent}>
-              {/* Image du produit */}
-              <Image source={item.image} style={styles.productImage} />
-              {/* Nom du produit */}
-              <Text style={styles.productName}>{item.name}</Text>
-              {/* Prix du produit */}
-              <Text style={styles.productPrice}>{item.price} FCFA</Text>
-            </View>
-          </TouchableOpacity>
-        )}
+        renderItem={renderProductItem}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.productsList}
         showsHorizontalScrollIndicator={false}
@@ -66,6 +146,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f6fd",
     width: "100%",
     top: -20,
+    paddingBottom: 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: 30,
   },
   categoryContainer: {
     paddingBottom: 10,
@@ -76,12 +163,10 @@ const styles = StyleSheet.create({
     marginRight: 10,
     borderRadius: 10,
     borderColor: "#ccc",
+    borderWidth: 1,
   },
   selectedCategory: {
     backgroundColor: "#fff",
-    fontSize: 13,
-    fontWeight: "bold",
-    color: "#FF4062",
   },
   selectedText: {
     fontSize: 13,
@@ -114,7 +199,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   productImage: {
-    width: 100,
+    width: "100%",
     height: 100,
     resizeMode: "cover",
     marginBottom: 5,

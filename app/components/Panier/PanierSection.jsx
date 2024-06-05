@@ -1,13 +1,20 @@
-import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
-import IncrementDecrementInput from "../utils/IncrementDecrementInput";
-import { MaterialIcons, AntDesign } from '@expo/vector-icons';
-import CustomButton from "../utils/CustomButton";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import IncrementDecrementInput from "../../utils/IncrementDecrementInput";
+import { MaterialIcons, AntDesign } from "@expo/vector-icons";
+import CustomButton from "../../utils/CustomButton";
 import { useNavigation } from "@react-navigation/native";
 
 const PanierSection = () => {
   const navigation = useNavigation();
+
+  // État pour gérer l'icône actuelle
+  const [isIconActive, setIsIconActive] = useState(false);
+
+  // Fonction pour changer l'état de l'icône
+  const toggleFavorite = () => {
+    setIsIconActive(!isIconActive);
+  };
 
   const handleMenu = () => {
     // Mettez ici votre logique de connexion
@@ -25,7 +32,10 @@ const PanierSection = () => {
         <View style={styles.produitContainer}>
           <View style={styles.produitItem}>
             <View>
-              <Image source={require('../../assets/pampers.png')} style={styles.imgArticle} />
+              <Image
+                source={require("../../assets/pampers.png")}
+                style={styles.imgArticle}
+              />
             </View>
             <View>
               <Text style={styles.ProduitName}>Pampers</Text>
@@ -33,8 +43,20 @@ const PanierSection = () => {
             </View>
           </View>
           <View style={styles.iconItem}>
-            <MaterialIcons name="favorite-border" size={24} color="#3350A4" style={{paddingEnd: 20}} />
-            <AntDesign name="delete" size={24} color="#F42D2D" />
+            <TouchableOpacity
+              onPress={toggleFavorite}
+              style={styles.iconContoure}
+            >
+              <MaterialIcons
+                name={isIconActive ? "favorite" : "favorite-outline"}
+                size={24}
+                color={isIconActive ? "rgba(226, 6, 19, 1)" : "#3350A4"}
+                style={{ paddingEnd: 20 }}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <AntDesign name="delete" size={24} color="#F42D2D" />
+            </TouchableOpacity>
           </View>
         </View>
         <View style={styles.price}>
@@ -52,7 +74,10 @@ const PanierSection = () => {
         <View style={styles.produitContainer}>
           <View style={styles.produitItem}>
             <View>
-              <Image source={require('../../assets/pampers.png')} style={styles.imgArticle} />
+              <Image
+                source={require("../../assets/pampers.png")}
+                style={styles.imgArticle}
+              />
             </View>
             <View>
               <Text style={styles.ProduitName}>Pampers</Text>
@@ -60,7 +85,12 @@ const PanierSection = () => {
             </View>
           </View>
           <View style={styles.iconItem}>
-            <MaterialIcons name="favorite-border" size={24} color="#3350A4" style={{paddingEnd: 20}} />
+            <MaterialIcons
+              name="favorite-border"
+              size={24}
+              color="#3350A4"
+              style={{ paddingEnd: 20 }}
+            />
             <AntDesign name="delete" size={24} color="#F42D2D" />
           </View>
         </View>
@@ -76,8 +106,18 @@ const PanierSection = () => {
         </View>
       </View>
       <View style={styles.buttonContainer}>
-        <CustomButton text={"Finaliser ma commande"} buttonStyle={{backgroundColor: "#28348A", width: 313, height: 50 }} textStyle={{fontSize: 14 ,color: "#fff"}} onPress={handleLivraison} />
-        <CustomButton text={"Poursuivre mes achats"} buttonStyle={{ width: 313, height: 50 }} textStyle={{fontSize: 14 , fontWeight: "400",color: "#000"}} onPress={handleMenu} />
+        <CustomButton
+          text={"Finaliser ma commande"}
+          buttonStyle={{ backgroundColor: "#28348A", width: 313, height: 50 }}
+          textStyle={{ fontSize: 14, color: "#fff" }}
+          onPress={handleLivraison}
+        />
+        <CustomButton
+          text={"Poursuivre mes achats"}
+          buttonStyle={{ width: 313, height: 50 }}
+          textStyle={{ fontSize: 14, fontWeight: "400", color: "#000" }}
+          onPress={handleMenu}
+        />
       </View>
     </View>
   );
@@ -99,7 +139,6 @@ const styles = StyleSheet.create({
     paddingRight: 30,
     paddingTop: 20,
     marginBottom: 10,
-    
   },
   produitContainer: {
     justifyContent: "space-between",

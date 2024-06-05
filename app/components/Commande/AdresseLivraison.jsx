@@ -10,7 +10,7 @@ import {
   FlatList,
 } from "react-native";
 import { FontAwesome, AntDesign } from "@expo/vector-icons";
-import CustomButton from "../utils/CustomButton";
+import CustomButton from "../../utils/CustomButton";
 import { useNavigation } from "@react-navigation/native";
 
 const AdresseLivraison = () => {

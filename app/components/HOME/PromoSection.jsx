@@ -99,6 +99,7 @@ const PromoSection = () => {
 const styles = StyleSheet.create({
   promoSection: {
     marginBottom: 20,
+    alignItems: "center",
   },
   backgroundImage: {
     resizeMode: "cover",
