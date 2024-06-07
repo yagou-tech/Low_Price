@@ -1,29 +1,33 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import InfoScreen from './InfoScreen'; // Importez le composant InfoScreen
+import { useDispatch, useSelector } from 'react-redux';
+import InfoScreen from './InfoScreen';
 import AddressScreen from './AddressScreen';
 import PointsScreen from './PointsScreen';
+import { fetchAddresses } from '../../redux/addressesSlice';
 
 const CompteScreen = () => {
-  const [selectedMenuItem, setSelectedMenuItem] = useState('Informations personnelles'); // Initialisé à "Informations personnelles"
+  const [selectedMenuItem, setSelectedMenuItem] = useState('Informations personnelles');
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.accessToken);
 
   const handleMenuItemPress = (menuItem) => {
     setSelectedMenuItem(menuItem);
   };
 
+  const handleReloadAddresses = () => {
+    dispatch(fetchAddresses(token));
+  };
+
   return (
     <View style={styles.container}>
-      {/* En-tête avec "Mon compte" et la photo de profil */}
       <View style={styles.headerContainer}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Mon compte</Text>
-          {/* Ajoutez votre photo de profil ici */}
           <Image source={require('../../assets/avatar.jpg')} style={styles.profileImage} />
         </View>
 
-        {/* Menu */}
         <View style={styles.menu}>
-          {/* Option: Informations personnelles */}
           <TouchableOpacity
             style={[styles.menuItem, selectedMenuItem === 'Informations personnelles' ? styles.menuItemSelected : null]}
             onPress={() => handleMenuItemPress('Informations personnelles')}
@@ -31,7 +35,6 @@ const CompteScreen = () => {
             <Text style={styles.menuItemText}>Informations personnelles</Text>
           </TouchableOpacity>
 
-          {/* Option: Mes adresses */}
           <TouchableOpacity
             style={[styles.menuItem, selectedMenuItem === 'Mes adresses' ? styles.menuItemSelected : null]}
             onPress={() => handleMenuItemPress('Mes adresses')}
@@ -39,7 +42,6 @@ const CompteScreen = () => {
             <Text style={styles.menuItemText}>Mes adresses</Text>
           </TouchableOpacity>
 
-          {/* Option: Mes points */}
           <TouchableOpacity
             style={[styles.menuItem, selectedMenuItem === 'Mes points' ? styles.menuItemSelected : null]}
             onPress={() => handleMenuItemPress('Mes points')}
@@ -49,12 +51,11 @@ const CompteScreen = () => {
         </View>
         <View style={styles.transition}></View>
 
-        {/* Conditional content display based on selectedMenuItem */}
         {selectedMenuItem === 'Informations personnelles' && (
           <InfoScreen />
         )}
         {selectedMenuItem === 'Mes adresses' && (
-          <AddressScreen />
+          <AddressScreen onMount={handleReloadAddresses} />
         )}
         {selectedMenuItem === 'Mes points' && (
           <PointsScreen />

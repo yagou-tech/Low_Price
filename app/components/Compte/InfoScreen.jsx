@@ -1,105 +1,51 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Alert, ActivityIndicator } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+import React, { useEffect } from "react";
+import { View, Text, StyleSheet, ActivityIndicator, Alert } from "react-native";
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUser, selectLoading, selectError } from '../../redux/AuthentificationSlice';
+import { getUserProfile } from '../../redux/UserProfileSlice';
 
 const InfoScreen = () => {
-  const [userInfo, setUserInfo] = useState(null);
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+  const loading = useSelector(selectLoading);
+  const error = useSelector(selectError);
 
   useEffect(() => {
-    // Fonction pour récupérer le token d'authentification stocké localement
-    const getToken = async () => {
-      try {
-        const token = await AsyncStorage.getItem("authToken");
-        if (token) {
-          // Si un token est trouvé, effectuez une requête pour récupérer les informations du profil utilisateur
-          getUserProfile(token);
-        } else {
-          Alert.alert("Erreur", "Aucun token d'authentification trouvé");
-        }
-      } catch (error) {
-        console.error(
-          "Erreur lors de la récupération du token d'authentification :",
-          error
-        );
-        Alert.alert(
-          "Erreur",
-          "Erreur lors de la récupération du token d'authentification"
-        );
-      }
-    };
-
-    getToken();
-  }, []);
-
-  // Fonction pour récupérer les informations du profil utilisateur
-  const getUserProfile = async (token) => {
-    try {
-      const response = await axios.get(
-        "https://lowpriceclone.euleukcommunication.sn/api/auth/user-profile",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setUserInfo(response.data);
-    } catch (error) {
-      console.error(
-        "Erreur lors de la récupération des informations du profil utilisateur :",
-        error
-      );
-      Alert.alert(
-        "Erreur",
-        "Erreur lors de la récupération des informations du profil utilisateur"
-      );
+    if (user) {
+      // Si l'utilisateur est authentifié, récupérez les informations de profil utilisateur
+      dispatch(getUserProfile());
     }
-  };
+  }, [user, dispatch]);
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert('Erreur', error);
+    }
+  }, [error]);
 
   return (
     <View style={styles.container}>
-      {userInfo ? (
-        <>
-          <View style={styles.infoItem}>
-            <Text style={styles.infoTitle}>Nom</Text>
-            <View style={styles.Name}>
-              <Text style={styles.infoContent}>{userInfo.first_name}</Text>
-              <Text style={styles.infoContent}>{userInfo.last_name}</Text>
-            </View>
-          </View>
-          <View style={styles.infoItem}>
-            <Text style={styles.infoTitle}>Email</Text>
-            <Text style={styles.infoContent}>{userInfo.email}</Text>
-          </View>
-          <View style={styles.infoItem}>
-            <Text style={styles.infoTitle}>Téléphone</Text>
-            <Text style={styles.infoContent}>{userInfo.telephone}</Text>
-          </View>
-          <View style={styles.infoItem}>
-            <Text style={styles.infoTitle}>Adresse</Text>
-            <Text style={styles.infoContent}>
-              {userInfo.addresses[0] ? (
-                userInfo.addresses[0].addresse
-              ) : (
-                <Text>Pas d'adresse enreistree</Text>
-              )}
-            </Text>
-          </View>
-          <View style={styles.infoItem}>
-            <Text style={styles.infoTitle}>Changer mot de passe</Text>
-            <Text style={styles.infoContent}>********</Text>
-          </View>
-        </>
+      {loading ? (
+        <ActivityIndicator size="large" color="#28348A" />
       ) : (
-        
-        <View>
-          <Text>Chargement des informations du profil utilisateur...</Text>
-          <ActivityIndicator size="large" color="#28348A" />
-        </View>
+        <>
+          <InfoItem title="Nom" content={`${user.first_name} ${user.last_name}`} />
+          <InfoItem title="Email" content={user.email} />
+          <InfoItem title="Téléphone" content={user.telephone} />
+          <InfoItem title="Adresse" content={user.addresses && user.addresses.length > 0 ? user.addresses[0].addresse : "Pas d'adresse enregistrée"} />
+          <InfoItem title="Changer mot de passe" content="********" />
+        </>
       )}
     </View>
   );
 };
+
+const InfoItem = ({ title, content }) => (
+  <View style={styles.infoItem}>
+    <Text style={styles.infoTitle}>{title}</Text>
+    <Text style={styles.infoContent}>{content}</Text>
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -119,9 +65,6 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: 14,
     fontWeight: "600",
-  },
-  Name: {
-    flexDirection: "row",
   },
   infoContent: {
     paddingStart: 10,

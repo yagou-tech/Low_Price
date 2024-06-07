@@ -1,15 +1,16 @@
-// AddressScreen.js
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Alert, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Alert, FlatList } from "react-native";
 import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesome } from "@expo/vector-icons";
 import CustomButton from "../../utils/CustomButton";
 import { fetchAddresses, addAddress, updateAddress } from "../../redux/addressesSlice";
 import AddressForm from "./AddressForm";
 
-const AddressScreen = () => {
+const AddressScreen = ({ onMount }) => {
   const dispatch = useDispatch();
   const { addresses, loading, error, isLoaded } = useSelector((state) => state.addresses);
+  const token = useSelector((state) => state.auth.accessToken);
+
   const [newAddress, setNewAddress] = useState({
     first_name: "",
     last_name: "",
@@ -26,13 +27,20 @@ const AddressScreen = () => {
 
   useEffect(() => {
     if (!isLoaded) {
-      dispatch(fetchAddresses());
+      dispatch(fetchAddresses(token));
     }
-  }, [dispatch, isLoaded]);
+  }, [dispatch, isLoaded, token]);
+
+  useEffect(() => {
+    if (onMount) {
+      onMount();
+    }
+  }, [onMount]);
 
   const handleAddAddress = async () => {
     try {
-      await dispatch(addAddress(newAddress)).unwrap();
+      console.log("Nouvelle adresse à ajouter :", newAddress);
+      await dispatch(addAddress({ token, newAddress })).unwrap();
       setNewAddress({
         first_name: "",
         last_name: "",
@@ -45,13 +53,14 @@ const AddressScreen = () => {
       });
       setIsFormVisible(false);
     } catch (error) {
+      console.error("Erreur lors de l'ajout de l'adresse :", error);
       Alert.alert("Erreur", "Erreur lors de l'ajout de l'adresse");
     }
   };
 
   const handleUpdateAddress = async () => {
     try {
-      await dispatch(updateAddress({ id: currentAddressId, updatedAddress: newAddress })).unwrap();
+      await dispatch(updateAddress({ token, id: currentAddressId, updatedAddress: newAddress })).unwrap();
       setNewAddress({
         first_name: "",
         last_name: "",
@@ -66,6 +75,7 @@ const AddressScreen = () => {
       setCurrentAddressId(null);
       setIsFormVisible(false);
     } catch (error) {
+      console.error("Erreur lors de la mise à jour de l'adresse :", error);
       Alert.alert("Erreur", "Erreur lors de la mise à jour de l'adresse");
     }
   };
@@ -91,26 +101,30 @@ const AddressScreen = () => {
     setIsFormVisible(true);
   };
 
+  const renderAddressItem = ({ item, index }) => (
+    <View key={item.id || index} style={styles.addressContainer}>
+      <View style={styles.addressItem}>
+        <Text style={styles.addressTitle}>Adresse {index + 1}</Text>
+        <FontAwesome name="edit" size={24} color="#28348A" onPress={() => handleEditPress(item.id, item)} />
+      </View>
+      <View style={styles.addressItem}>
+        <Text style={styles.addressContent}>
+          {item.addresse}, {item.zone}, {item.quartier}
+        </Text>
+      </View>
+    </View>
+  );
+
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       {loading ? (
-        <Text style={styles.loadingText}>Chargement des informations du profil utilisateur...</Text>
+        <Text style={styles.loadingText}>Chargement de vos adresses...</Text>
       ) : addresses && addresses.length > 0 ? (
-        <View style={styles.addressContainer}>
-          {addresses.map((address, index) => (
-            <View key={address.id} style={styles.addressCard}>
-              <View style={styles.addressItem}>
-                <Text style={styles.addressTitle}>Adresse {index + 1}</Text>
-                <FontAwesome name="edit" size={24} color="#28348A" onPress={() => handleEditPress(address.id, address)} />
-              </View>
-              <View style={styles.addressItem}>
-                <Text style={styles.addressContent}>
-                  {address.addresse}, {address.zone}, {address.quartier}
-                </Text>
-              </View>
-            </View>
-          ))}
-        </View>
+        <FlatList
+          data={addresses}
+          renderItem={renderAddressItem}
+          keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
+        />
       ) : (
         <Text style={styles.loadingText}>Aucune adresse trouvée</Text>
       )}
@@ -135,7 +149,7 @@ const AddressScreen = () => {
         />
       )}
       <View style={styles.ajoutAddress}></View>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -180,9 +194,6 @@ const styles = StyleSheet.create({
   },
   ajoutAddress: {
     paddingBottom: 250,
-  },
-  addressCard: {
-    marginBottom: 0,
   },
 });
 

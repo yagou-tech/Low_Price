@@ -11,7 +11,8 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { Input, Button } from "@rneui/themed";
 import { MaterialIcons } from "@expo/vector-icons";
-import axios from "axios";
+import { useDispatch, useSelector } from 'react-redux';
+import { signup, selectLoading, selectError, selectUser } from '../../redux/AuthentificationSlice';
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 const SignUpScreen = () => {
@@ -22,16 +23,19 @@ const SignUpScreen = () => {
   const [telephone, setTelephone] = useState("");
   const [password, setPassword] = useState("");
   const [password_confirmation, setPassword_confirmation] = useState("");
-  const [loading, setLoading] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [errors, setErrors] = useState({});
   const navigation = useNavigation();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
+  const dispatch = useDispatch();
+  const loading = useSelector(selectLoading);
+  const error = useSelector(selectError);
+  const user = useSelector(selectUser);
+
   const handleSignUp = async () => {
     // Reset errors
     setErrors({});
-    setLoading(true);
     try {
       const form = {
         first_name,
@@ -43,37 +47,13 @@ const SignUpScreen = () => {
         password_confirmation,
       };
       console.log("Form Data:", JSON.stringify(form));
-      const response = await axios.post(
-        "https://lowpriceclone.euleukcommunication.sn/api/auth/register",
-        form,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.data && response.message) {
-        Alert.alert("Succès", "Inscription réussie. Veuillez vous connecter.");
-        navigation.navigate("SignInScreen");
-      } else {
-        Alert.alert(
-          "Erreur",
-          response.errors || "Erreur lors de l'inscription"
-        );
-      }
+      await dispatch(signup(form)).unwrap();
+      Alert.alert("Succès", "Inscription réussie. Veuillez vous connecter.");
+      navigation.navigate("SignInScreen");
     } catch (error) {
-      // Handle errors and set error state
-      if (error.response && error.response.data && error.response.data.errors) {
-        setErrors(error.response.data.errors);
-      }
-      // Alert.alert("Erreur", "Erreur lors de l'inscription");
-      console.error(
-        "API Error Response:",
-        JSON.stringify(error.response.data.errors)
-      );
-    } finally {
-      setLoading(false);
+      console.error("Signup Error:", error.message);
+      setErrors(error.errors || {});
+      Alert.alert("Erreur", error.message || "Erreur lors de l'inscription");
     }
   };
 
@@ -100,7 +80,6 @@ const SignUpScreen = () => {
   };
 
   const togglePasswordVisibility = () => {
-    // Fonction pour changer la visibilité du mot de passe
     setIsPasswordVisible(!isPasswordVisible);
   };
 
@@ -197,11 +176,11 @@ const SignUpScreen = () => {
               inputContainerStyle={styles.inputContainer}
               rightIcon={
                 <MaterialIcons
-                  name={isPasswordVisible ? "visibility" : "visibility-off"} // Changez l'icône en fonction de l'état
+                  name={isPasswordVisible ? "visibility" : "visibility-off"}
                   style={styles.icon}
                   size={24}
                   color="black"
-                  onPress={togglePasswordVisibility} // Appeler la fonction pour changer la visibilité du mot de passe
+                  onPress={togglePasswordVisibility}
                 />
               }
             />
@@ -235,7 +214,7 @@ const SignUpScreen = () => {
             containerStyle={styles.buttonContainer}
             titleStyle={styles.buttonTitle}
             onPress={handleSignUp}
-            loading={loading} // Affiche le spinner de chargement pendant le traitement
+            loading={loading}
           />
         </View>
         <View style={styles.signupContainer}>
@@ -270,8 +249,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "400",
   },
-  loginItem: {
-  },
+  loginItem: {},
   loginTitle: {
     fontSize: 14,
     fontWeight: "500",
@@ -340,7 +318,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: "#E20613",
-    paddingBottom: 10
+    paddingBottom: 10,
   },
 });
 

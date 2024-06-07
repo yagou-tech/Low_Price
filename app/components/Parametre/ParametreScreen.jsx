@@ -2,32 +2,27 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch } from 'react-redux';
-import { performLogout } from '../../redux/AuthentificationSlice';
-
+import { logout } from "../../redux/AuthentificationSlice";
 
 const ParametreScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const handleLogout = () => {
-    dispatch(performLogout());
+    dispatch(logout());
     navigation.navigate('SignInScreen');
   };
 
   const handleConfidentiality = () => {
-    // Mettez ici votre logique de connexion
     navigation.navigate("Confidentiality");
   };
 
   const handleParametre = () => {
-    // Mettez ici votre logique de connexion
     navigation.navigate("Profil");
   };
 
   const handleMentionsLegales = () => {
-    // Mettez ici votre logique de connexion
     navigation.navigate("MentionsLegales");
   };
 

@@ -1,18 +1,27 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { Input } from '@rneui/themed';
 import CustomButton from '../../utils/CustomButton';
 
 const AddressForm = ({ newAddress, setNewAddress, isUpdating, handleAddAddress, handleUpdateAddress, setIsFormVisible }) => {
   return (
-    <View style={styles.formContainer}>
-      <Text style={styles.modalTitle}>{isUpdating ? "Mettre à jour l'adresse" : "Ajouter une nouvelle adresse"}</Text>
-      <Input
-        placeholder="Prénom"
-        value={newAddress.first_name}
-        onChangeText={(value) => setNewAddress({ ...newAddress, first_name: value })}
-      />
-      <Input
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={true} // Remplacer par le state de visibilité de votre modal
+      onRequestClose={() => {
+        setIsFormVisible(false);
+      }}
+    >
+      <View style={styles.modalContainer}>
+        <View style={styles.formContainer}>
+          <Text style={styles.modalTitle}>{isUpdating ? "Mettre à jour l'adresse" : "Ajouter une nouvelle adresse"}</Text>
+          <Input
+            placeholder="Prénom"
+            value={newAddress.first_name}
+            onChangeText={(value) => setNewAddress({ ...newAddress, first_name: value })}
+          />
+          <Input
         placeholder="Nom"
         value={newAddress.last_name}
         onChangeText={(value) => setNewAddress({ ...newAddress, last_name: value })}
@@ -47,30 +56,36 @@ const AddressForm = ({ newAddress, setNewAddress, isUpdating, handleAddAddress, 
         value={newAddress.telephone2}
         onChangeText={(value) => setNewAddress({ ...newAddress, telephone2: value })}
       />
-      <CustomButton
-        text={isUpdating ? "Mettre à jour" : "Ajouter"}
-        buttonStyle={{
-          backgroundColor: "#28348A",
-          width: "100%",
-        }}
-        onPress={isUpdating ? handleUpdateAddress : handleAddAddress}
-      />
-      <TouchableOpacity onPress={() => setIsFormVisible(false)}>
-        <Text style={styles.cancelText}>Annuler</Text>
-      </TouchableOpacity>
-    </View>
+          <CustomButton
+            text={isUpdating ? "Mettre à jour" : "Ajouter"}
+            buttonStyle={{
+              backgroundColor: "#28348A",
+              width: "100%",
+            }}
+            onPress={isUpdating ? handleUpdateAddress : handleAddAddress}
+          />
+          <TouchableOpacity onPress={() => setIsFormVisible(false)}>
+            <Text style={styles.cancelText}>Annuler</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fond semi-transparent pour l'arrière-plan
+  },
   formContainer: {
     backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
-    marginTop: 20,
     width: '90%',
     alignSelf: 'center',
-    flex: 1,
   },
   modalTitle: {
     fontSize: 18,

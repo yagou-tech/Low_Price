@@ -1,36 +1,39 @@
-// SignInScreen.js
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, Alert } from "react-native";
+import { View, StyleSheet, Text, ActivityIndicator, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Input, Button } from "@rneui/themed";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from 'react-redux';
-import { login, selectLoading, selectError, selectUser } from '../../redux/AuthentificationSlice';
+import { login, selectLoading, selectError, clearError, selectIsAuthenticated } from '../../redux/AuthentificationSlice';
 
 const SignInScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const navigation = useNavigation();
   const dispatch = useDispatch();
   const loading = useSelector(selectLoading);
   const error = useSelector(selectError);
-  const user = useSelector(selectUser);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+
 
   useEffect(() => {
-    if (user) {
-      navigation.navigate("MainScreen");
+    if (error) {
+      Alert.alert('Erreur', error, [{ text: 'OK', onPress: () => dispatch(clearError()) }]);
     }
-  }, [user, navigation]);
+  }, [error, dispatch]);
 
-  const handleLogin = async () => {
-    try {
-      await dispatch(login(email, password));
+  useEffect(() => {
+    if (isAuthenticated) {
       setEmail('');
       setPassword('');
-    } catch (err) {
-      Alert.alert('Erreur', err.message);
+      // Naviguer vers l'écran principal ou un autre écran après la connexion réussie
+      navigation.navigate("MainScreen");
     }
+  }, [isAuthenticated, navigation]);
+
+  const handleLogin = () => {
+    dispatch(login({ email, password }));
   };
 
   const handleSignUp = () => {
@@ -85,7 +88,6 @@ const SignInScreen = () => {
             }
           />
         </View>
-        {error && <Text style={styles.error}>{error}</Text>}
       </View>
       <View style={styles.forgetPasswordContainer}>
         <Text style={styles.forgetPassword} onPress={handleForget}>
@@ -93,7 +95,6 @@ const SignInScreen = () => {
         </Text>
       </View>
       <View style={styles.bottomContainer}>
-        
         <View>
           <Button
             title="SE CONNECTER"
@@ -107,7 +108,7 @@ const SignInScreen = () => {
         <View style={styles.signupContainer}>
           <Text>Vous n’avez pas de compte ?</Text>
           <Text style={styles.signup} onPress={handleSignUp}>
-            S'inscrire
+            S‘inscrire
           </Text>
         </View>
       </View>
@@ -136,6 +137,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "400",
   },
+
   loginTitle: {
     fontSize: 12,
     fontWeight: "500",
@@ -152,6 +154,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingStart: 20,
     backgroundColor: "#fff",
+    borderBottomWidth: 0,
   },
   icon: {
     position: "absolute",
@@ -194,9 +197,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 14,
     margin: 5,
-  },
-  error: {
-    color: 'red',
   },
 });
 
