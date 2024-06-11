@@ -63,7 +63,7 @@ const MainScreen = () => {
                   name="left"
                   size={20}
                   color="black"
-                  style={{ margin: 10 }}
+                  style={{ margin: 10, paddingStart: 5, }}
                   onPress={() => {
                     // Mettez ici votre logique de connexion
                     navigation.navigate("Home");

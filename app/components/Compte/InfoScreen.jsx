@@ -7,6 +7,7 @@ import { getUserProfile } from '../../redux/UserProfileSlice';
 const InfoScreen = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
+  const addresses = useSelector((state) => state.addresses);
   const loading = useSelector(selectLoading);
   const error = useSelector(selectError);
 
@@ -32,7 +33,7 @@ const InfoScreen = () => {
           <InfoItem title="Nom" content={`${user.first_name} ${user.last_name}`} />
           <InfoItem title="Email" content={user.email} />
           <InfoItem title="Téléphone" content={user.telephone} />
-          <InfoItem title="Adresse" content={user.addresses && user.addresses.length > 0 ? user.addresses[0].addresse : "Pas d'adresse enregistrée"} />
+          <InfoItem title="Adresse" content={addresses.addresses && addresses.addresses.length > 0 ? addresses.addresses[0].addresse  : "Pas d'adresse enregistrée"} />
           <InfoItem title="Changer mot de passe" content="********" />
         </>
       )}

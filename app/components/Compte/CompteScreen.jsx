@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
   menu: {
     flexDirection: 'row',
     marginTop: 70,
+    justifyContent: "space-around",
   },
   menuItem: {
     flexDirection: 'row',
